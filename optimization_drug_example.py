@@ -27,6 +27,10 @@ def escitalopram(x):  # weaker efficacy, low toxicity
     efficacy = 0.6 * np.exp(-0.1*(x-4)**2)
     toxicity = 0.1 * x**2 / 120
     return efficacy - escitalopram_lambda * toxicity
+# %% combined function
+def combined(x):
+    return metformin(x) + lisinopril(x) + escitalopram(x)
+
 
 #%% plot drug efficacies
 x = np.linspace(0, 15, 100)
@@ -116,3 +120,35 @@ print(f"Newton's Method - Optimal Lisinopril Effect: {opt_effect_lisinopril_nm*1
 opt_dose_escitalopram_nm, opt_effect_escitalopram_nm = newtons_method(escitalopram, x0=1.0)
 print(f"Newton's Method - Optimal Escitalopram Dose: {opt_dose_escitalopram_nm:.2f} mg")
 print(f"Newton's Method - Optimal Escitalopram Effect: {opt_effect_escitalopram_nm*100:.2f}%")
+
+plt.plot(x, combined(x), 'r--', linewidth=2, label='Combined Effect')
+plt.legend()
+plt.show()
+
+# %% optimal combined dose
+
+opt_comb, eff_comb = newtons_method(combined, x0=1.0)
+
+print(f"\nCombined optimal dose: {opt_comb:.2f} mg")
+print(f"Combined optimal effect: {eff_comb*100:.2f}%")
+
+# %% lambda sweep for metformin
+
+lambda_values = np.linspace(0.1, 2.0, 100)
+best_lambda = None
+closest_diff = float('inf')
+
+for lam in lambda_values:
+    metformin_lambda = lam
+    opt_dose, _ = newtons_method(metformin, x0=1.0)
+
+    diff = abs(opt_dose - opt_comb)
+
+    if diff < closest_diff:
+        closest_diff = diff
+        best_lambda = lam
+        best_dose = opt_dose
+
+print("\nBest metformin lambda:", best_lambda)
+print("Metformin optimal dose:", best_dose)
+print("Difference from combined dose:", closest_diff)
