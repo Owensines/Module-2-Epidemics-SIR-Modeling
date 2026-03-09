@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 #%%
 # Load the data
 data = pd.read_csv(r'/Users/priya/Documents/Comp_Bio/GitHub/Module-2-Epidemics-SIR-Modeling/Data/mystery_virus_daily_active_counts_RELEASE#1.csv', parse_dates=['date'], header=0, index_col=None)
-
 #%%
 # Make a plot of the active cases over time
 x_values = data['date']
