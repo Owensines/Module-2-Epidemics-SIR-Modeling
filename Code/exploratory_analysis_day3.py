@@ -69,7 +69,8 @@ def seir_euler(beta, sigma, gamma, S0, E0, I0, R0, timepoints, N):
     return S, E, I, R
 #Grid search optimization 
 #INPUTS: timepoints, N, S0, E0, I0, R0, data
-N = 100000 #assumption about population size 
+#N = 100000 #assumption about population size 
+N = 17900
 S0 = N-41
 E0 = 40
 I0 = 1
@@ -95,13 +96,16 @@ for b in beta_range:
 #Determine parameters corresponding to lowest SSE
 #Return best_beta, best_sigma, and best_gamma and corresponding SSE
 best_beta, best_sigma, best_gamma = best_params
+print(f"Best beta: {best_beta}, Best sigma: {best_sigma}, Best gamma: {best_gamma}, SSE: {best_sse}")
 #predicting future 
 future_timepoints = np.arange(0, 150, 1)
 S_f, E_f, I_f, R_f = seir_euler(best_beta, best_sigma, best_gamma, S0, E0, I0, R0_init, future_timepoints, N)
 peak_idx = np.argmax(I_f)
 peak_day = future_timepoints[peak_idx]
+peak_cases = I_f[peak_idx]
 
 print(f"Predicted peak day: {peak_day}")
+print(f"Predicted peak cases: {peak_cases}")
 plt.plot(x_values, exponential_growth(x_values, *popt), 'r-', label='Fitted curve')
 plt.plot(x_values, y_values, marker='o')
 plt.plot(future_timepoints, I_f, 'b-', label='SEIR Prediction')
@@ -112,7 +116,7 @@ plt.legend()
 plt.show() 
 '''Use the Euler method to run the model out many more days until the data peaks
 How high is the peak? Is that a reasonable value?
-The peak is around 4500 cases, which seems reasonable given the data we have so far.
+The peak is around 4182.406 cases, which seems reasonable given the data we have so far.
 What day will the peak occur?
 The peak will occur around day 85
 '''
